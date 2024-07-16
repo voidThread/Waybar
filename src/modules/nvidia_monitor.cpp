@@ -4,6 +4,7 @@
 #include <json/value.h>
 #include <spdlog/spdlog.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
 #include <cstdio>
 #include <cstring>
@@ -56,6 +57,10 @@ auto waybar::modules::NvidiaMonitor::update() -> void {
 
 void waybar::modules::NvidiaMonitor::runNvidiaSmiOnce() {
   auto pid = fork();
+  auto status{0};
+  if (pid > 0) {
+    wait(&status);
+  }
   if (pid == 0) {
     for (auto& item : programArgv_) {
       spdlog::debug("[{}]: {}", name_, item);
